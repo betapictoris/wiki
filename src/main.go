@@ -12,7 +12,8 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-
+	"github.com/charmbracelet/glamour"
+	
 	md "github.com/JohannesKaufmann/html-to-markdown"
 )
 
@@ -148,18 +149,20 @@ func main() {
 	converter := md.NewConverter("", true, nil)
 	content, err := converter.ConvertString(string(cont))
 	
+	out, err := glamour.Render(content, "dark")
+	
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
 
 	if saveToFile {
-		if err := os.WriteFile(article + ".md", []byte(content), 0666); err != nil {
+		if err := ioutil.WriteFile(article + ".md", []byte(content), 0666); err != nil {
         		log.Fatal(err)
 		}
 	} else {
 		p := tea.NewProgram(
-			model{content: string(content), title: "Wikipedia" },
+			model{content: string(out), title: "Wikipedia" },
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 		)

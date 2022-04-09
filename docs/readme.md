@@ -1,4 +1,4 @@
-# Wiki CLI 
+# Wiki CLI [![Go](https://github.com/BetaPictoris/wcli/actions/workflows/go.yml/badge.svg)](https://github.com/BetaPictoris/wcli/actions/workflows/go.yml)
 View Wikipedia articles through the CLI
 
 ## Installation

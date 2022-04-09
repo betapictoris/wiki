@@ -30,8 +30,8 @@ Alternatively, you can install it from go's official website: https://go.dev/doc
 ```bash
 git clone git@github.com:BetaPictoris/wiki.git      # Clone the repository
 cd wiki                                             # Change into the repository's directory
-bash build.sh                                       # Build Wiki CLI
-sudo install -Dt /usr/local/bin -m 755 wiki         # Install Wiki CLI to "/usr/local/bin" with the mode "755"
+make                                                # Build Wiki CLI
+sudo make install                                   # Install Wiki CLI to "/usr/local/bin" with the mode "755"
 ```
 
 ### User install

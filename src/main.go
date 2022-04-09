@@ -147,7 +147,7 @@ func main() {
 	resp, err := http.Get(apiURL + "page/html/" + article)
 	cont, err := ioutil.ReadAll(resp.Body)
 	converter := md.NewConverter("", true, nil)
-	content, err := converter.ConvertString(string(cont))
+	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
 	
 	out, err := glamour.Render(content, "dark")
 	

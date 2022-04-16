@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+    "encoding/json"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -17,8 +18,9 @@ import (
 	md "github.com/JohannesKaufmann/html-to-markdown"
 )
 
-const lang   = "en" // Lang prefix used on
-const apiURL = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
+const lang          = "en" // Lang prefix used on
+const apiURL        = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
+const searchAPI_URL = "https://" + lang + ".wikipedia.org/w/api.php?action=opensearch&namespace=0&format=json&search="
 const useHighPerformanceRenderer = false
 
 var (
@@ -127,34 +129,63 @@ func max(a, b int) int {
 	return b
 }
 
+func searchWiki(q string) []interface{} {
+    var res []interface{}
+    qURL := searchAPI_URL + q
+    
+    resp, err := http.Get(qURL + q)
+    cont, err := ioutil.ReadAll(resp.Body)
+    err = json.Unmarshal([]byte(string(cont)), &res)
+
+    if err == nil {
+        return res
+    } else {
+        return nil
+    }
+}
+
 func main() {
 	article := ""
+    search  := ""
 	saveToFile := false
+    sResp := searchWiki("")
 
 	if len(os.Args) >= 2 {
 		article = os.Args[1]
+        
+        if article == "-S" {
+            search = os.Args[2]
+        }
 
-		if len(os.Args) >= 3 {
-			if os.Args[2] == "-s" {
-				saveToFile = true
-			}
-		}
-	} else {
-		log.Fatal("Usage: wiki <Article> [-s (Save to file)]")
-	}
+        if os.Args[len(os.Args) - 1] == "-s" {
+            saveToFile = true
+        }
+    } else {
+        log.Fatal("Usage: wiki [-S (Search)] <Article> [-s (Save to file)]")
+    }
+    
+    if search != "" {
+        sResp = searchWiki(search)
+        fmt.Println(sResp[1])
+    }
 
 	// Read remote URL's conts
-	resp, err := http.Get(apiURL + "page/html/" + article)
-	cont, err := ioutil.ReadAll(resp.Body)
-	converter := md.NewConverter("", true, nil)
-	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
-	
-	out, err := glamour.Render(content, "dark")
-	
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
-	}
+    var out string
+    var content string
+    if article != "-S" {
+        resp, err := http.Get(apiURL + "page/html/" + article)
+	    cont, err := ioutil.ReadAll(resp.Body)
+    	converter := md.NewConverter("", true, nil)
+        content, err = converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
+        out, err = glamour.Render(content, "dark")
+
+        if err != nil {
+            fmt.Printf("Something went wrong...\nDEBUG: ")
+            log.Fatal(err)
+        }
+    } else {
+        log.Fatal("Couldn't get that for you... Maybe open up an issue?\nERR: NOARTICLEVAL")
+    }
 
 	if saveToFile {
 		if err := ioutil.WriteFile(article + ".md", []byte(content), 0666); err != nil {

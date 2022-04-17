@@ -1,4 +1,4 @@
-module github.com/betapictoris/wikicli
+module github.com/betapictoris/wiki
 
 go 1.18
 

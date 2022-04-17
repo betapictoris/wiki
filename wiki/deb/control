@@ -1,0 +1,5 @@
+Package: wiki 
+Version: 1.2.0
+Architecture: amd64 
+Maintainer: beta@mrhallway.me
+Description: View Wikipedia articles through the CLI

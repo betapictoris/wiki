@@ -8,7 +8,7 @@ binary:
 
 deb:
 	mkdir -vp build/wiki-deb/usr/local/bin/
-	go build -o build/wiki-deb/usr/local/bin/
+	go build -o build/wiki-deb/usr/local/bin/wiki ./main.go
 	mkdir -vp build/wiki-deb/DEBIAN/
 	cp -v wiki/deb/control build/wiki-deb/DEBIAN/
 	cp -v wiki/deb/postinst build/wiki-deb/DEBIAN/

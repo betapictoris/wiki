@@ -26,4 +26,4 @@ jobs:
       with:
         # Artifact name
         name: Wiki CLI
-        path: ./wiki
+        path: ./build

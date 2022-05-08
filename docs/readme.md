@@ -19,7 +19,7 @@ You need Go installed to build this program. You can install it from your distro
 
 ```bash
 # Arch/Manjaro (and derivatives)
-sudo pacman -S go
+sudo pacman -Syu go
 
 # Debian/Ubuntu (and derivatives)
 sudo apt install golang-go

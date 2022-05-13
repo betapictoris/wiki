@@ -27,11 +27,19 @@ sudo apt install golang-go
 
 Alternatively, you can install it from go's official website: https://go.dev/doc/install
 
+Then, to build wiki run:
+
 ```bash
 git clone git@github.com:BetaPictoris/wiki.git      # Clone the repository
 cd wiki                                             # Change into the repository's directory
 make                                                # Build Wiki CLI
 sudo make install                                   # Install Wiki CLI to "/usr/local/bin" with the mode "755"
+```
+
+or, if you have [IndiePKG](https://github.com/talwat/indiepkg):
+
+```bash
+indiepkg install wiki
 ```
 
 ### User install

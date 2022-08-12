@@ -11,6 +11,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/knipferrc/teacup/statusbar"
 	"github.com/charmbracelet/glamour"
 	
@@ -28,6 +30,7 @@ type Bubble struct {
 	content     string
 	title 	    string
 	articleName string
+	viewport viewport.Model
 }
 
 // Init intializes the UI.

@@ -21,6 +21,19 @@ const lang   = "en" // Lang prefix used on
 const apiURL = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
 const useHighPerformanceRenderer = false
 
+// Bubble represents the properties of the UI.
+type Bubble struct {
+	statusbar   statusbar.Bubble
+	height      int
+	content     string
+	title 	    string
+	articleName string
+}
+
+// Init intializes the UI.
+func (b Bubble) Init() tea.Cmd {
+	return nil
+}
 
 // New creates a new instance of the UI.
 func New() Bubble {
@@ -48,11 +61,36 @@ func New() Bubble {
 	}
 }
 
-type model struct {
-	content  string
-	title 	 string
-	ready    bool
-	viewport viewport.Model
+// Update handles all UI interactions.
+func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var (
+		cmds []tea.Cmd
+	)
+
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		b.height = msg.Height
+		b.statusbar.SetSize(msg.Width)
+		b.statusbar.SetContent(b.title, b.articleName, "", "")
+
+		return b, nil
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "esc", "q":
+			cmds = append(cmds, tea.Quit)
+		}
+	}
+
+	return b, tea.Batch(cmds...)
+}
+
+// View returns a string representation of the UI.
+func (b Bubble) View() string {
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		lipgloss.NewStyle().Height(b.height-statusbar.Height).Render(b.content),
+		b.statusbar.View(),
+	)
 }
 
 func main() {

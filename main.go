@@ -128,7 +128,7 @@ func main() {
 		}
 	} else {
 		p := tea.NewProgram(
-			model{content: string(out), title: "Wikipedia" },
+			Bubble{content: string(out), title: "Wiki CLI", articleName: strings.Replace(article, "_", " ", -1)},
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 		)

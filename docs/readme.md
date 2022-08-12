@@ -1,17 +1,19 @@
 # Wiki CLI [![Go](https://github.com/BetaPictoris/wcli/actions/workflows/go.yml/badge.svg)](https://github.com/BetaPictoris/wcli/actions/workflows/go.yml)
+
 View Wikipedia articles through the CLI
 
 ![wiki-md](https://user-images.githubusercontent.com/65696362/162582942-8d0c2f14-c689-4438-94fb-cbe482090c51.png)
 
-
 ## Installation
+
 ### From release
+
 ```bash
 curl -LO https://github.com/BetaPictoris/wiki/releases/latest/download/wiki    # Download the latest binary.
 sudo install -Dt /usr/local/bin -m 755 wiki                                    # Install Wiki CLI to "/usr/local/bin" with the mode "755"
 ```
 
-### Build from source 
+### Build from source
 
 #### Dependencies
 
@@ -45,7 +47,9 @@ indiepkg install wiki
 ```
 
 ### User install
+
 If you don't have access to `sudo` on your system you can install to your user's `~/.local/bin` directory with this command: 
+
 ```bash
 install -Dt ~/.local/bin -m 755 wiki
 ```

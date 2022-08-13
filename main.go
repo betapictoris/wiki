@@ -40,7 +40,7 @@ func (b Bubble) Init() tea.Cmd {
 }
 
 // New creates a new instance of the UI.
-func New() Bubble {
+func NewStatusbar() statusbar.Bubble {
 	sb := statusbar.New(
 		statusbar.ColorConfig{
 			Foreground: lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#ffffff"},
@@ -52,17 +52,15 @@ func New() Bubble {
 		},
 		statusbar.ColorConfig{
 			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
-			Background: lipgloss.AdaptiveColor{Light: "#A550DF", Dark: "#A550DF"},
+			Background: lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"},
 		},
 		statusbar.ColorConfig{
 			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
-			Background: lipgloss.AdaptiveColor{Light: "#6124DF", Dark: "#6124DF"},
+			Background: lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"},
 		},
 	)
 
-	return Bubble{
-		statusbar: sb,
-	}
+	return sb
 }
 
 // Update handles all UI interactions.
@@ -186,7 +184,7 @@ func main() {
 		}
 	} else {
 		p := tea.NewProgram(
-			Bubble{content: string(out), title: "Wiki CLI", articleName: strings.Replace(article, "_", " ", -1)},
+			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.Replace(article, "_", " ", -1)},
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 		)

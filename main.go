@@ -26,11 +26,12 @@ const useHighPerformanceRenderer = false
 // Bubble represents the properties of the UI.
 type Bubble struct {
 	statusbar   statusbar.Bubble
+	viewport    viewport.Model
 	height      int
 	content     string
 	title 	    string
 	articleName string
-	viewport viewport.Model
+	ready       bool
 }
 
 // Init intializes the UI.
@@ -67,16 +68,39 @@ func New() Bubble {
 // Update handles all UI interactions.
 func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
+		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		b.height = msg.Height
-		b.statusbar.SetSize(msg.Width)
-		b.statusbar.SetContent(b.title, b.articleName, "", "")
 
-		return b, nil
+		footerHeight := lipgloss.Height(b.footerView())
+		verticalMarginHeight := footerHeight
+
+		if !b.ready {
+			// Since this program is using the full size of the viewport we
+			// need to wait until we've received the window dimensions before
+			// we can initialize the viewport. The initial dimensions come in
+			// quickly, though asynchronously, which is why we wait for them
+			// here.
+			b.viewport = viewport.New(msg.Width, msg.Height-verticalMarginHeight)
+			b.viewport.YPosition = 0
+			b.viewport.HighPerformanceRendering = useHighPerformanceRenderer
+			b.viewport.SetContent(b.content)
+			b.ready = true
+
+			// This is only necessary for high performance rendering, which in
+			// most cases you won't need.
+			//
+			// Render the viewport one line below the header.
+			b.viewport.YPosition = 1
+		} else {
+			b.viewport.Width = msg.Width
+			b.viewport.Height = msg.Height - verticalMarginHeight
+		}
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
@@ -84,17 +108,27 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	// Handle keyboard and mouse events in the viewport
+	b.viewport, cmd = b.viewport.Update(msg)
+	cmds = append(cmds, cmd)
+
 	return b, tea.Batch(cmds...)
 }
 
 // View returns a string representation of the UI.
 func (b Bubble) View() string {
-	return lipgloss.JoinVertical(
-		lipgloss.Top,
-		lipgloss.NewStyle().Height(b.height-statusbar.Height).Render(b.content),
-		b.statusbar.View(),
-	)
+	if !b.ready {
+		return "\n  Initializing..."
+	}
+	return fmt.Sprintf("%s\n%s\n%s", b.viewport.View(), b.footerView())
 }
+
+func (b Bubble) footerView() string {
+	b.statusbar.SetSize(b.viewport.Width)
+	b.statusbar.SetContent("Wiki CLI", "Hello", "World", "Test")
+	return b.statusbar.View()
+}
+
 
 func main() {
 	article := ""

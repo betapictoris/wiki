@@ -30,7 +30,7 @@ jobs:
         run: go build -o build/wiki ./main.go
 
       - if: ${{ matrix.os }} == 'ubuntu-latest'
-      - name: Bulid (Debian)
+        name: Bulid (Debian)
         run: make deb
 
       - name: Upload a Build Artifact

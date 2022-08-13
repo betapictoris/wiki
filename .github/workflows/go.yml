@@ -8,7 +8,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v2
 
@@ -17,12 +23,19 @@ jobs:
         with:
           go-version: 1.19
 
-      - name: Build
-        run: make
+      - name: Build (Directories)
+        run: mkdir -vp build
+
+      - name: Bulid (Binary)
+        run: go build -o build/wiki ./main.go
+
+      - name: Bulid (Debian)
+        if: ${{ matrix.os }} == ubuntu-latest
+        run: make deb
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.3.1
         with:
           # Artifact name
-          name: Wiki CLI
+          name: Wiki CLI - ${{ matrix.os }}
           path: ./build

@@ -120,7 +120,7 @@ func (b Bubble) View() string {
 	if !b.ready {
 		return "\n  Initializing..."
 	}
-	return fmt.Sprintf("%s\n%s\n%s", b.viewport.View(), b.footerView())
+	return fmt.Sprintf("%s\n%s", b.viewport.View(), b.footerView())
 }
 
 func (b Bubble) footerView() string {

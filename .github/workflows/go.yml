@@ -10,10 +10,11 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest] # OSes to run on
+        version: [1.19] # Go version to use
 
     runs-on: ${{ matrix.os }}
-    name: Build on ${{ matrix.os }}
+    name: Build on ${{ matrix.os }} Go ${{ matrix.version }}
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +22,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.19
+          go-version: ${{ matrix.version }}
 
       - name: Build (Directories)
         run: mkdir build

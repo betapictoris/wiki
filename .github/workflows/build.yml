@@ -24,6 +24,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest] # OSes to run on
         version: [1.19] # Go version to use
 
+    needs: lint
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} Go ${{ matrix.version }}
 

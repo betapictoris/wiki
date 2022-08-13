@@ -1,5 +1,5 @@
-Package: wiki 
-Version: 1.2.0
-Architecture: amd64 
-Maintainer: beta@mrhallway.me
+Package: wiki
+Version: 1.1.4
+Architecture: amd64
+Maintainer: beta@ozx.me
 Description: View Wikipedia articles through the CLI

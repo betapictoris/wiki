@@ -125,7 +125,7 @@ func (b Bubble) View() string {
 
 func (b Bubble) footerView() string {
 	b.statusbar.SetSize(b.viewport.Width)
-	b.statusbar.SetContent("Wiki CLI", "Hello", "World", "Test")
+	b.statusbar.SetContent(b.title, b.articleName, "", "")
 	return b.statusbar.View()
 }
 

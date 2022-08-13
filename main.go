@@ -56,7 +56,7 @@ func NewStatusbar() statusbar.Bubble {
 		},
 		statusbar.ColorConfig{
 			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
-			Background: lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"},
+			Background: lipgloss.AdaptiveColor{Light: "#6124DF", Dark: "#6124DF"},
 		},
 	)
 
@@ -123,7 +123,7 @@ func (b Bubble) View() string {
 
 func (b Bubble) footerView() string {
 	b.statusbar.SetSize(b.viewport.Width)
-	b.statusbar.SetContent(b.title, b.articleName, "", "")
+	b.statusbar.SetContent(b.title, b.articleName, "", fmt.Sprintf("%3.f%%", b.viewport.ScrollPercent()*100))
 	return b.statusbar.View()
 }
 

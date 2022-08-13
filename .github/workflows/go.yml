@@ -24,7 +24,7 @@ jobs:
           go-version: 1.19
 
       - name: Build (Directories)
-        run: mkdir -vp build
+        run: mkdir build
 
       - name: Bulid (Binary)
         run: go build -o build/wiki ./main.go

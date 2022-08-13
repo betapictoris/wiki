@@ -4,7 +4,7 @@ package main
 import (
 	"log"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -148,7 +148,7 @@ func main() {
 
 	// Read remote URL's conts
 	resp, err := http.Get(apiURL + "page/html/" + article)
-	cont, err := ioutil.ReadAll(resp.Body)
+	cont, err := io.ReadAll(resp.Body)
 	converter := md.NewConverter("", true, nil)
 	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
 	
@@ -160,8 +160,15 @@ func main() {
 	}
 
 	if saveToFile {
-		if err := ioutil.WriteFile(article + ".md", []byte(content), 0666); err != nil {
-        		log.Fatal(err)
+		f, err := os.OpenFile(article + ".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+
+		_, err = f.Write([]byte(content))
+		if err != nil {
+			log.Fatal(err)
 		}
 	} else {
 		p := tea.NewProgram(

@@ -148,9 +148,23 @@ func main() {
 
 	// Read remote URL's conts
 	resp, err := http.Get(apiURL + "page/html/" + article)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	
 	cont, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+
 	converter := md.NewConverter("", true, nil)
 	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 	
 	out, err := glamour.Render(content, "dark")
 	

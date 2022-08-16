@@ -2,7 +2,7 @@
 
 View Wikipedia articles through the CLI
 
-![wiki-md](https://user-images.githubusercontent.com/65696362/162582942-8d0c2f14-c689-4438-94fb-cbe482090c51.png)
+![wiki](./wiki-gnome.png)
 
 ## Installation
 

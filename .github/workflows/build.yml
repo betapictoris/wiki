@@ -1,0 +1,58 @@
+name: Go
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest] # OSes to run on
+        version: [1.19] # Go version to use
+
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    name: Build on ${{ matrix.os }} Go ${{ matrix.version }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.version }}
+
+      - name: Build (Directories)
+        run: mkdir build
+
+      - name: Build (Binary)
+        run: go build -o build/wiki ./main.go
+
+      - name: Build (Debian)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: make deb
+
+      - name: Rename binary for Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: move build/wiki build/wiki.exe
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          # Artifact name
+          name: Wiki CLI - ${{ matrix.os }}
+          path: ./build

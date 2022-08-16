@@ -4,14 +4,16 @@ package main
 import (
 	"log"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/charmbracelet/bubbles/viewport"
+	"github.com/knipferrc/teacup/statusbar"
 	"github.com/charmbracelet/glamour"
 	
 	md "github.com/JohannesKaufmann/html-to-markdown"
@@ -21,111 +23,110 @@ const lang   = "en" // Lang prefix used on
 const apiURL = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
 const useHighPerformanceRenderer = false
 
-var (
-	titleStyle = func() lipgloss.Style {
-		b := lipgloss.RoundedBorder()
-		b.Right = "├"
-		return lipgloss.NewStyle().BorderStyle(b).Padding(0, 1)
-	}()
-
-	infoStyle = func() lipgloss.Style {
-		b := lipgloss.RoundedBorder()
-		b.Left = "┤"
-		return titleStyle.Copy().BorderStyle(b)
-	}()
-)
-
-type model struct {
-	content  string
-	title 	 string
-	ready    bool
-	viewport viewport.Model
+// Bubble represents the properties of the UI.
+type Bubble struct {
+	statusbar   statusbar.Bubble
+	viewport    viewport.Model
+	height      int
+	content     string
+	title 	    string
+	articleName string
+	ready       bool
 }
 
-func (m model) Init() tea.Cmd {
+// Init intializes the UI.
+func (b Bubble) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+// New creates a new instance of the UI.
+func NewStatusbar() statusbar.Bubble {
+	sb := statusbar.New(
+		statusbar.ColorConfig{
+			Foreground: lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#ffffff"},
+			Background: lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"},
+		},
+		statusbar.ColorConfig{
+			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
+			Background: lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"},
+		},
+		statusbar.ColorConfig{
+			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
+			Background: lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"},
+		},
+		statusbar.ColorConfig{
+			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
+			Background: lipgloss.AdaptiveColor{Light: "#6124DF", Dark: "#6124DF"},
+		},
+	)
+
+	return sb
+}
+
+// Update handles all UI interactions.
+func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		if k := msg.String(); k == "ctrl+c" || k == "q" || k == "esc" {
-			return m, tea.Quit
-		}
-
 	case tea.WindowSizeMsg:
-		headerHeight := lipgloss.Height(m.headerView())
-		footerHeight := lipgloss.Height(m.footerView())
-		verticalMarginHeight := headerHeight + footerHeight
+		b.height = msg.Height
 
-		if !m.ready {
+		footerHeight := lipgloss.Height(b.footerView())
+		verticalMarginHeight := footerHeight
+
+		if !b.ready {
 			// Since this program is using the full size of the viewport we
 			// need to wait until we've received the window dimensions before
 			// we can initialize the viewport. The initial dimensions come in
 			// quickly, though asynchronously, which is why we wait for them
 			// here.
-			m.viewport = viewport.New(msg.Width, msg.Height-verticalMarginHeight)
-			m.viewport.YPosition = headerHeight
-			m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
-			m.viewport.SetContent(m.content)
-			m.ready = true
+			b.viewport = viewport.New(msg.Width, msg.Height-verticalMarginHeight)
+			b.viewport.YPosition = 0
+			b.viewport.HighPerformanceRendering = useHighPerformanceRenderer
+			b.viewport.SetContent(b.content)
+			b.ready = true
 
 			// This is only necessary for high performance rendering, which in
 			// most cases you won't need.
 			//
 			// Render the viewport one line below the header.
-			m.viewport.YPosition = headerHeight + 1
+			b.viewport.YPosition = 1
 		} else {
-			m.viewport.Width = msg.Width
-			m.viewport.Height = msg.Height - verticalMarginHeight
+			b.viewport.Width = msg.Width
+			b.viewport.Height = msg.Height - verticalMarginHeight
 		}
 
-		if useHighPerformanceRenderer {
-			// Render (or re-render) the whole viewport. Necessary both to
-			// initialize the viewport and when the window is resized.
-			//
-			// This is needed for high-performance rendering only.
-			cmds = append(cmds, viewport.Sync(m.viewport))
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "esc", "q":
+			cmds = append(cmds, tea.Quit)
 		}
 	}
 
 	// Handle keyboard and mouse events in the viewport
-	m.viewport, cmd = m.viewport.Update(msg)
+	b.viewport, cmd = b.viewport.Update(msg)
 	cmds = append(cmds, cmd)
 
-	return m, tea.Batch(cmds...)
+	return b, tea.Batch(cmds...)
 }
 
-func (m model) View() string {
-	if !m.ready {
+// View returns a string representation of the UI.
+func (b Bubble) View() string {
+	if !b.ready {
 		return "\n  Initializing..."
 	}
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.viewport.View(), m.footerView())
+	return fmt.Sprintf("%s\n%s", b.viewport.View(), b.footerView())
 }
 
-func (m model) headerView() string {
-	title := titleStyle.Render(m.title)
-	line := strings.Repeat("─", max(0, m.viewport.Width-lipgloss.Width(title)))
-	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
+func (b Bubble) footerView() string {
+	b.statusbar.SetSize(b.viewport.Width)
+	b.statusbar.SetContent(b.title, b.articleName, "", fmt.Sprintf("%3.f%%", b.viewport.ScrollPercent()*100))
+	return b.statusbar.View()
 }
 
-func (m model) footerView() string {
-	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.viewport.ScrollPercent()*100))
-	line := strings.Repeat("─", max(0, m.viewport.Width-lipgloss.Width(info)))
-	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
 
 func main() {
 	article := ""
@@ -145,9 +146,23 @@ func main() {
 
 	// Read remote URL's conts
 	resp, err := http.Get(apiURL + "page/html/" + article)
-	cont, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	
+	cont, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+
 	converter := md.NewConverter("", true, nil)
 	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 	
 	out, err := glamour.Render(content, "dark")
 	
@@ -157,12 +172,19 @@ func main() {
 	}
 
 	if saveToFile {
-		if err := ioutil.WriteFile(article + ".md", []byte(content), 0666); err != nil {
-        		log.Fatal(err)
+		f, err := os.OpenFile(article + ".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+
+		_, err = f.Write([]byte(content))
+		if err != nil {
+			log.Fatal(err)
 		}
 	} else {
 		p := tea.NewProgram(
-			model{content: string(out), title: "Wikipedia" },
+			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.Replace(article, "_", " ", -1)},
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 		)

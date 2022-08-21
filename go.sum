@@ -1,5 +1,5 @@
-github.com/JohannesKaufmann/html-to-markdown v1.3.3 h1:T2A3aYmbGokj0LeRVLr3sWXtpNlM9jWq06qPxcXOK4Y=
-github.com/JohannesKaufmann/html-to-markdown v1.3.3/go.mod h1:JNSClIRYICFDiFhw6RBhBeWGnMSSKVZ6sPQA+TK4tyM=
+github.com/JohannesKaufmann/html-to-markdown v1.3.5 h1:FrP3D5IqpxkNOk97TvbFduSo0JQKs/ZpgjuxpmAEFRA=
+github.com/JohannesKaufmann/html-to-markdown v1.3.5/go.mod h1:JNSClIRYICFDiFhw6RBhBeWGnMSSKVZ6sPQA+TK4tyM=
 github.com/PuerkitoBio/goquery v1.5.1 h1:PSPBGne8NIUWw+/7vFBV+kG2J/5MOjbzc7154OaKCSE=
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/alecthomas/chroma v0.10.0 h1:7XDcGkCQopCNKjZHfYrNLraA+M7e0fMiJ/Mfikbfjek=

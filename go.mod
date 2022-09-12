@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/JohannesKaufmann/html-to-markdown v1.3.5
-	github.com/charmbracelet/bubbles v0.13.0
+	github.com/charmbracelet/bubbles v0.14.0
 	github.com/charmbracelet/bubbletea v0.22.1
 	github.com/charmbracelet/glamour v0.5.0
 	github.com/charmbracelet/lipgloss v0.5.0

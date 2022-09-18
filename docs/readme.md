@@ -27,7 +27,7 @@ sudo pacman -Syu go
 sudo apt install golang-go
 ```
 
-Alternatively, you can install it from go's official website: [go.dev/doc/install](https://go.dev/doc/install)
+Alternatively, you can install it from [Go's official website](https://go.dev/doc/install).
 
 Then, to build & install wiki run:
 

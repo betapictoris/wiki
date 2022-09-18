@@ -2,7 +2,7 @@
 
 View Wikipedia articles through the CLI
 
-![wiki](./wiki-gnome.png)
+![wiki](./assets/wiki.svg)
 
 ## Installation
 
@@ -48,8 +48,12 @@ indiepkg install wiki
 
 ### User install
 
-If you don't have access to `sudo` on your system you can install to your user's `~/.local/bin` directory with this command: 
+If you don't have access to `sudo` on your system you can install to your user's `~/.local/bin` directory with this command:
 
 ```bash
 install -Dt ~/.local/bin -m 755 wiki
 ```
+
+---
+
+![wiki](./assets/betapictoris/header.svg)

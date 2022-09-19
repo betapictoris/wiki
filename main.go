@@ -35,7 +35,7 @@ type Bubble struct {
 }
 
 // Init intializes the UI.
-func (b Bubble) Init() tea.Cmd {
+func (Bubble) Init() tea.Cmd {
 	return nil
 }
 

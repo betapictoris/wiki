@@ -2,9 +2,9 @@ package main
 
 // Import pkgs
 import (
-	"log"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -13,13 +13,13 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/charmbracelet/bubbles/viewport"
-	"github.com/knipferrc/teacup/statusbar"
 	"github.com/charmbracelet/glamour"
-	
+	"github.com/knipferrc/teacup/statusbar"
+
 	md "github.com/JohannesKaufmann/html-to-markdown"
 )
 
-const lang   = "en" // Lang prefix used on
+const lang = "en"                                                // Lang prefix used on
 const apiURL = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
 const useHighPerformanceRenderer = false
 
@@ -29,7 +29,7 @@ type Bubble struct {
 	viewport    viewport.Model
 	height      int
 	content     string
-	title 	    string
+	title       string
 	articleName string
 	ready       bool
 }
@@ -127,7 +127,6 @@ func (b Bubble) footerView() string {
 	return b.statusbar.View()
 }
 
-
 func main() {
 	article := ""
 	saveToFile := false
@@ -150,7 +149,7 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	
+
 	cont, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
@@ -158,21 +157,21 @@ func main() {
 	}
 
 	converter := md.NewConverter("", true, nil)
-	content, err := converter.ConvertString(strings.Replace(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org", -1))
+	content, err := converter.ConvertString(strings.ReplaceAll(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org"))
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	
+
 	out, err := glamour.Render(content, "dark")
-	
+
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
 
 	if saveToFile {
-		f, err := os.OpenFile(article + ".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -184,11 +183,11 @@ func main() {
 		}
 	} else {
 		p := tea.NewProgram(
-			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.Replace(article, "_", " ", -1)},
+			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.ReplaceAll(article, "_", " ")},
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 		)
-	
+
 		if err := p.Start(); err != nil {
 			fmt.Println("could not run program:", err)
 			os.Exit(1)

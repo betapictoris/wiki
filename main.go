@@ -128,6 +128,7 @@ func (b Bubble) footerView() string {
 }
 
 func main() {
+
 	article := ""
 	saveToFile := false
 
@@ -172,16 +173,16 @@ func main() {
 
 	if saveToFile {
 		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-		defer f.Close()
 		if err != nil {
+			f.Close()
 			log.Fatal(err)
-			os.Exit(2) // Exit with code "2" for an error while opening "f"
 		}
 
 		_, err = f.Write([]byte(content))
 		if err != nil {
 			log.Fatal(err)
 		}
+		f.Close()
 	} else {
 		p := tea.NewProgram(
 			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.ReplaceAll(article, "_", " ")},

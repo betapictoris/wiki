@@ -172,10 +172,11 @@ func main() {
 
 	if saveToFile {
 		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		defer f.Close()
 		if err != nil {
 			log.Fatal(err)
+			os.Exit(2) // Exit with code "2" for an error while opening "f"
 		}
-		defer f.Close()
 
 		_, err = f.Write([]byte(content))
 		if err != nil {

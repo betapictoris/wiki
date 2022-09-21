@@ -6,3 +6,7 @@ enabled = true
 
   [analyzers.meta]
   import_root = "github.com/BetaPictoris/wiki"
+
+[[transformers]]
+name = "gofumpt"
+enabled = true

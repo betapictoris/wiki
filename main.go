@@ -19,9 +19,11 @@ import (
 	md "github.com/JohannesKaufmann/html-to-markdown"
 )
 
-const lang = "en"                                                // Lang prefix used on
-const apiURL = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
-const useHighPerformanceRenderer = false
+const (
+	lang                       = "en"                                              // Lang prefix used on
+	apiURL                     = "https://" + lang + ".wikipedia.org/api/rest_v1/" // Wikipedia API URL
+	useHighPerformanceRenderer = false
+)
 
 // Bubble represents the properties of the UI.
 type Bubble struct {
@@ -128,7 +130,6 @@ func (b Bubble) footerView() string {
 }
 
 func main() {
-
 	article := ""
 	saveToFile := false
 
@@ -165,7 +166,6 @@ func main() {
 	}
 
 	out, err := glamour.Render(content, "dark")
-
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)

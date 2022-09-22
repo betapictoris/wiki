@@ -149,32 +149,27 @@ func main() {
 	resp, err := http.Get(apiURL + "page/html/" + article)
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	cont, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	converter := md.NewConverter("", true, nil)
 	content, err := converter.ConvertString(strings.ReplaceAll(string(cont), "//upload.wikimedia.org", "https://upload.wikimedia.org"))
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	out, err := glamour.Render(content, "dark")
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	if saveToFile {
 		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0400)
 		if err != nil {
-			f.Close()
 			log.Fatal(err)
 		}
 
@@ -182,17 +177,19 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		f.Close()
+		err = f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
 	} else {
 		p := tea.NewProgram(
 			Bubble{statusbar: NewStatusbar(), content: string(out), title: "Wiki CLI", articleName: strings.ReplaceAll(article, "_", " ")},
 			tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
-			tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
+			tea.WithMouseCellMotion(), // turn on mouse support, so we can track the mouse wheel
 		)
 
 		if err := p.Start(); err != nil {
-			fmt.Println("could not run program:", err)
-			os.Exit(1)
+			log.Fatal("could not run program:", err)
 		}
 	}
 }

@@ -41,7 +41,7 @@ func (Bubble) Init() tea.Cmd {
 	return nil
 }
 
-// New creates a new instance of the UI.
+// NewStatusbar creates a new instance of the UI.
 func NewStatusbar() statusbar.Bubble {
 	sb := statusbar.New(
 		statusbar.ColorConfig{

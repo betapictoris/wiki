@@ -172,7 +172,7 @@ func main() {
 	}
 
 	if saveToFile {
-		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+		f, err := os.OpenFile(article+".md", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0400)
 		if err != nil {
 			f.Close()
 			log.Fatal(err)

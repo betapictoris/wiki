@@ -36,7 +36,7 @@ type Bubble struct {
 	ready       bool
 }
 
-// Init intializes the UI.
+// Init initializes the UI.
 func (Bubble) Init() tea.Cmd {
 	return nil
 }

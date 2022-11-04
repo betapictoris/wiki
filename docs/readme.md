@@ -2,7 +2,7 @@
 
 View Wikipedia articles through the CLI
 
-[![wiki](./assets/wiki.svg)](https://github.com/BetaPictoris/wiki)
+[![wiki](https://cdn.ozx.me/betapictoris/wiki.svg)](https://github.com/BetaPictoris/wiki)
 
 ## Installation
 
@@ -56,4 +56,4 @@ install -Dt ~/.local/bin -m 755 wiki
 
 ---
 
-[![wiki](./assets/betapictoris/header.svg)](https://github.com/BetaPictoris)
+[![wiki](https://cdn.ozx.me/betapictoris/header.svg)](https://github.com/BetaPictoris)

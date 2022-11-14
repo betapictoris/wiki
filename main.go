@@ -162,7 +162,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	out, err := glamour.Render(content, "dark")
+	out, err := glamour.Render("# "+content, "dark")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -173,7 +173,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		_, err = f.Write([]byte(content))
+		_, err = f.Write([]byte("# " + content))
 		if err != nil {
 			log.Fatal(err)
 		}

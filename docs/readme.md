@@ -2,6 +2,9 @@
 
 View Wikipedia articles through the CLI
 
+> [!WARNING]
+> Wiki CLI is considered to be feature complete and archived. 
+
 [![wiki](https://cdn.ozx.me/betapictoris/wiki.svg)](https://github.com/BetaPictoris/wiki)
 
 ## Installation
